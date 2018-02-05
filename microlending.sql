@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 16, 2018 at 12:09 PM
+-- Generation Time: Feb 05, 2018 at 08:23 AM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
@@ -66,7 +66,7 @@ CREATE TABLE `ml_entity` (
   `subdivision` varchar(2000) NOT NULL,
   `zipcode` varchar(1000) NOT NULL,
   `country` varchar(1000) NOT NULL,
-  `brithdate` date NOT NULL,
+  `birthdate` date NOT NULL,
   `email` int(11) NOT NULL,
   `phone` int(11) NOT NULL,
   `mobilennumber` int(11) NOT NULL,
@@ -118,6 +118,20 @@ CREATE TABLE `ml_loan` (
   `loanstatus` int(11) NOT NULL,
   `tenure` int(11) NOT NULL,
   `comments` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ml_loanstatus`
+--
+
+CREATE TABLE `ml_loanstatus` (
+  `id` int(11) NOT NULL,
+  `name` varchar(1000) NOT NULL,
+  `code` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `dateadded` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -257,7 +271,7 @@ CREATE TABLE `ml_updatelog` (
 CREATE TABLE `ml_useraccessdef` (
   `id` int(11) NOT NULL,
   `useraccessid` int(11) NOT NULL,
-  `recordoprationid` int(11) NOT NULL
+  `recordoperationid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -322,7 +336,12 @@ ALTER TABLE `ml_email`
 -- Indexes for table `ml_entity`
 --
 ALTER TABLE `ml_entity`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `gender` (`gender`),
+  ADD KEY `phone` (`phone`),
+  ADD KEY `email` (`email`),
+  ADD KEY `profilepic` (`profilepic`),
+  ADD KEY `maritalstatus` (`maritalstatus`);
 
 --
 -- Indexes for table `ml_genderlist`
@@ -340,6 +359,15 @@ ALTER TABLE `ml_image`
 -- Indexes for table `ml_loan`
 --
 ALTER TABLE `ml_loan`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tranid` (`tranid`),
+  ADD KEY `guarantor` (`guarantor`),
+  ADD KEY `loanstatus` (`loanstatus`);
+
+--
+-- Indexes for table `ml_loanstatus`
+--
+ALTER TABLE `ml_loanstatus`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -382,7 +410,10 @@ ALTER TABLE `ml_systemlog`
 -- Indexes for table `ml_transactions`
 --
 ALTER TABLE `ml_transactions`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `entityid` (`entityid`),
+  ADD KEY `customerid` (`customerid`),
+  ADD KEY `transtypeid` (`transtypeid`);
 
 --
 -- Indexes for table `ml_transactiontypelist`
@@ -400,19 +431,24 @@ ALTER TABLE `ml_updatelog`
 -- Indexes for table `ml_useraccessdef`
 --
 ALTER TABLE `ml_useraccessdef`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `useraccessid` (`useraccessid`),
+  ADD KEY `recordoperationid` (`recordoperationid`);
 
 --
 -- Indexes for table `ml_usercredentials`
 --
 ALTER TABLE `ml_usercredentials`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userid` (`userid`);
 
 --
 -- Indexes for table `ml_userrole`
 --
 ALTER TABLE `ml_userrole`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userid` (`userid`),
+  ADD KEY `userroleid` (`userroleid`);
 
 --
 -- Indexes for table `ml_userrolelist`
@@ -458,6 +494,12 @@ ALTER TABLE `ml_image`
 -- AUTO_INCREMENT for table `ml_loan`
 --
 ALTER TABLE `ml_loan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ml_loanstatus`
+--
+ALTER TABLE `ml_loanstatus`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -537,6 +579,57 @@ ALTER TABLE `ml_userrole`
 --
 ALTER TABLE `ml_userrolelist`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `ml_entity`
+--
+ALTER TABLE `ml_entity`
+  ADD CONSTRAINT `ml_entity_ibfk_1` FOREIGN KEY (`gender`) REFERENCES `ml_genderlist` (`id`),
+  ADD CONSTRAINT `ml_entity_ibfk_2` FOREIGN KEY (`phone`) REFERENCES `ml_phone` (`id`),
+  ADD CONSTRAINT `ml_entity_ibfk_3` FOREIGN KEY (`email`) REFERENCES `ml_email` (`id`),
+  ADD CONSTRAINT `ml_entity_ibfk_4` FOREIGN KEY (`profilepic`) REFERENCES `ml_image` (`id`),
+  ADD CONSTRAINT `ml_entity_ibfk_5` FOREIGN KEY (`profilepic`) REFERENCES `ml_image` (`id`),
+  ADD CONSTRAINT `ml_entity_ibfk_6` FOREIGN KEY (`maritalstatus`) REFERENCES `ml_maritalstatus` (`id`);
+
+--
+-- Constraints for table `ml_loan`
+--
+ALTER TABLE `ml_loan`
+  ADD CONSTRAINT `ml_loan_ibfk_1` FOREIGN KEY (`tranid`) REFERENCES `ml_transactions` (`id`),
+  ADD CONSTRAINT `ml_loan_ibfk_2` FOREIGN KEY (`guarantor`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_loan_ibfk_3` FOREIGN KEY (`loanstatus`) REFERENCES `ml_loanstatus` (`id`);
+
+--
+-- Constraints for table `ml_transactions`
+--
+ALTER TABLE `ml_transactions`
+  ADD CONSTRAINT `ml_transactions_ibfk_1` FOREIGN KEY (`entityid`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_transactions_ibfk_2` FOREIGN KEY (`customerid`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_transactions_ibfk_3` FOREIGN KEY (`transtypeid`) REFERENCES `ml_transactiontypelist` (`id`);
+
+--
+-- Constraints for table `ml_useraccessdef`
+--
+ALTER TABLE `ml_useraccessdef`
+  ADD CONSTRAINT `ml_useraccessdef_ibfk_1` FOREIGN KEY (`useraccessid`) REFERENCES `ml_userrolelist` (`id`),
+  ADD CONSTRAINT `ml_useraccessdef_ibfk_2` FOREIGN KEY (`recordoperationid`) REFERENCES `ml_operationcode` (`id`);
+
+--
+-- Constraints for table `ml_usercredentials`
+--
+ALTER TABLE `ml_usercredentials`
+  ADD CONSTRAINT `ml_usercredentials_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `ml_entity` (`id`);
+
+--
+-- Constraints for table `ml_userrole`
+--
+ALTER TABLE `ml_userrole`
+  ADD CONSTRAINT `ml_userrole_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_userrole_ibfk_2` FOREIGN KEY (`userroleid`) REFERENCES `ml_userrolelist` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
