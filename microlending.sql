@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 05, 2018 at 08:23 AM
+-- Generation Time: Feb 08, 2018 at 05:43 AM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
@@ -34,6 +34,22 @@ CREATE TABLE `ml_bankfund` (
   `name` varchar(3000) NOT NULL,
   `description` text NOT NULL,
   `dateadded` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ml_banktransaction`
+--
+
+CREATE TABLE `ml_banktransaction` (
+  `id` int(11) NOT NULL,
+  `entityid` int(11) NOT NULL,
+  `transactiontype` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  `transactiondate` date NOT NULL,
+  `comments` text NOT NULL,
+  `bankfund` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -146,6 +162,20 @@ CREATE TABLE `ml_maritalstatus` (
   `code` varchar(1000) NOT NULL,
   `description` text NOT NULL,
   `dateadded` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ml_menuhierarhy`
+--
+
+CREATE TABLE `ml_menuhierarhy` (
+  `id` int(11) NOT NULL,
+  `parentmenu` int(11) NOT NULL,
+  `childmenu` int(11) NOT NULL,
+  `dateadded` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `isactive` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -327,6 +357,15 @@ ALTER TABLE `ml_bankfund`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `ml_banktransaction`
+--
+ALTER TABLE `ml_banktransaction`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `bankfund` (`bankfund`),
+  ADD KEY `entityid` (`entityid`),
+  ADD KEY `transactiontype` (`transactiontype`);
+
+--
 -- Indexes for table `ml_email`
 --
 ALTER TABLE `ml_email`
@@ -377,10 +416,19 @@ ALTER TABLE `ml_maritalstatus`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `ml_menuhierarhy`
+--
+ALTER TABLE `ml_menuhierarhy`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parentmenu` (`parentmenu`),
+  ADD KEY `childmenu` (`childmenu`);
+
+--
 -- Indexes for table `ml_menulink`
 --
 ALTER TABLE `ml_menulink`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `menutype` (`menutype`);
 
 --
 -- Indexes for table `ml_menutypelist`
@@ -404,7 +452,9 @@ ALTER TABLE `ml_phone`
 -- Indexes for table `ml_systemlog`
 --
 ALTER TABLE `ml_systemlog`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userid` (`userid`),
+  ADD KEY `operationid` (`operationid`);
 
 --
 -- Indexes for table `ml_transactions`
@@ -425,7 +475,8 @@ ALTER TABLE `ml_transactiontypelist`
 -- Indexes for table `ml_updatelog`
 --
 ALTER TABLE `ml_updatelog`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `syslogid` (`syslogid`);
 
 --
 -- Indexes for table `ml_useraccessdef`
@@ -464,6 +515,12 @@ ALTER TABLE `ml_userrolelist`
 -- AUTO_INCREMENT for table `ml_bankfund`
 --
 ALTER TABLE `ml_bankfund`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ml_banktransaction`
+--
+ALTER TABLE `ml_banktransaction`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -506,6 +563,12 @@ ALTER TABLE `ml_loanstatus`
 -- AUTO_INCREMENT for table `ml_maritalstatus`
 --
 ALTER TABLE `ml_maritalstatus`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ml_menuhierarhy`
+--
+ALTER TABLE `ml_menuhierarhy`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -585,6 +648,14 @@ ALTER TABLE `ml_userrolelist`
 --
 
 --
+-- Constraints for table `ml_banktransaction`
+--
+ALTER TABLE `ml_banktransaction`
+  ADD CONSTRAINT `ml_banktransaction_ibfk_1` FOREIGN KEY (`bankfund`) REFERENCES `ml_bankfund` (`id`),
+  ADD CONSTRAINT `ml_banktransaction_ibfk_2` FOREIGN KEY (`entityid`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_banktransaction_ibfk_3` FOREIGN KEY (`transactiontype`) REFERENCES `ml_transactiontypelist` (`id`);
+
+--
 -- Constraints for table `ml_entity`
 --
 ALTER TABLE `ml_entity`
@@ -604,12 +675,38 @@ ALTER TABLE `ml_loan`
   ADD CONSTRAINT `ml_loan_ibfk_3` FOREIGN KEY (`loanstatus`) REFERENCES `ml_loanstatus` (`id`);
 
 --
+-- Constraints for table `ml_menuhierarhy`
+--
+ALTER TABLE `ml_menuhierarhy`
+  ADD CONSTRAINT `ml_menuhierarhy_ibfk_1` FOREIGN KEY (`parentmenu`) REFERENCES `ml_menulink` (`id`),
+  ADD CONSTRAINT `ml_menuhierarhy_ibfk_2` FOREIGN KEY (`childmenu`) REFERENCES `ml_menulink` (`id`);
+
+--
+-- Constraints for table `ml_menulink`
+--
+ALTER TABLE `ml_menulink`
+  ADD CONSTRAINT `ml_menulink_ibfk_1` FOREIGN KEY (`menutype`) REFERENCES `ml_menutypelist` (`id`);
+
+--
+-- Constraints for table `ml_systemlog`
+--
+ALTER TABLE `ml_systemlog`
+  ADD CONSTRAINT `ml_systemlog_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `ml_entity` (`id`),
+  ADD CONSTRAINT `ml_systemlog_ibfk_2` FOREIGN KEY (`operationid`) REFERENCES `ml_operationcode` (`id`);
+
+--
 -- Constraints for table `ml_transactions`
 --
 ALTER TABLE `ml_transactions`
   ADD CONSTRAINT `ml_transactions_ibfk_1` FOREIGN KEY (`entityid`) REFERENCES `ml_entity` (`id`),
   ADD CONSTRAINT `ml_transactions_ibfk_2` FOREIGN KEY (`customerid`) REFERENCES `ml_entity` (`id`),
   ADD CONSTRAINT `ml_transactions_ibfk_3` FOREIGN KEY (`transtypeid`) REFERENCES `ml_transactiontypelist` (`id`);
+
+--
+-- Constraints for table `ml_updatelog`
+--
+ALTER TABLE `ml_updatelog`
+  ADD CONSTRAINT `ml_updatelog_ibfk_1` FOREIGN KEY (`syslogid`) REFERENCES `ml_systemlog` (`id`);
 
 --
 -- Constraints for table `ml_useraccessdef`
