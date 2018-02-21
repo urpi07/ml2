@@ -16,7 +16,17 @@ class RestFul_Model extends CI_Model{
 	}
 	
 	public function setData($data){
+		
+		this->cleanData($data);
 		$this->data = $data;
+	}
+	
+	//Cleans the posts data by removing all fields 
+	//not related to the table
+	private function cleanData($data){
+		if(isset($data){
+			
+		}
 	}
 	
 	public function getData(){
