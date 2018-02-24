@@ -1,5 +1,5 @@
 <?php
-class Email extends RestFul_Model{
+class GenderList extends RestFul_Model{
 
 	public function __construct(){
 		parent::__construct("ml_genderlist");			
