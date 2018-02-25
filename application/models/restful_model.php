@@ -1,5 +1,5 @@
 <?php
-class RestFul_Model extends CI_Model{
+class Restful_Model extends CI_Model{
 	
 	protected $table;
 	protected $data;
@@ -9,25 +9,22 @@ class RestFul_Model extends CI_Model{
 		parent::__construct();	
 		$this->table = $table;		
 		$this->load->database();
+		$this->load->helper("lendinglib");
 	}
 	
 	public function setTable($table){		
 		$this->table = $table;
 	}
 	
-	public function setData($data){
-		
-		this->cleanData($data);
+	public function setData($data){	
+		$this->cleanData($data);
 		$this->data = $data;
+		$this->db->set($this->data);
 	}
 	
 	//Cleans the posts data by removing all fields 
 	//not related to the table
-	private function cleanData($data){
-		if(isset($data){
-			
-		}
-		
+	private function cleanData($data){	
 		return $data;
 	}
 	
@@ -41,6 +38,7 @@ class RestFul_Model extends CI_Model{
 		if(isset($this->data) && isset($this->table)){			
 			
 			//$this->db->trans_start();
+			
 			$this->db->insert($this->table, $this->args);
 			//$this->db->trans_complete();
 			
