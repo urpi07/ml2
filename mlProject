@@ -23,7 +23,10 @@
             </Folder>
             <Folder name="controllers">
                 <File name="application\controllers\index.html" />
-                <File name="application\controllers\restful_controller.php" />
+                <File name="application\controllers\Welcome.php" />
+                <File name="application\controllers\genderC.php" />
+                <File name="application\controllers\index.html" />
+                <File name="application\controllers\RestfulController.php" />
                 <File name="application\controllers\Welcome.php" />
             </Folder>
             <Folder name="core">

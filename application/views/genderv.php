@@ -7,4 +7,32 @@
 	<label id="ml_lbl_gname">Description</label>
 	<input type="text" name="ml_gdescription" id="ml_gname" required placeholder="Description"></input><br>
 	<button type="submit" name="ml_submit">Submit</button>
+	
+	<table>
+	<tr>
+		<th>
+			<?php
+				if(isset($headers)){
+					
+					foreach($headers as $header){					
+						echo "<td>$header</td>";
+					}
+				}
+			?>
+		</th>
+	</tr>
+	<?php
+		if(isset($vals) ){
+						
+			foreach($vals as $value){
+				echo "<tr>";
+					echo "<td>$value->id</td>";
+					echo "<td>$value->name</td>";
+					echo "<td>$value->description</td>";
+					echo "<td>$value->code</td>";
+				echo "</tr>";
+			}
+		}
+	?>
+	</table>
 </form>

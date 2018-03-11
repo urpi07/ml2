@@ -19,12 +19,20 @@ class GenericEntity extends RestFul_Model{
 	}
 	
 	public function edit(){
+		
 	}
 	
-	public function delete(){
+	public function delete($id){
+		
 	}
 	
 	public function get(){
+	}
+	
+	public function getAll(){
+		$query = $this->db->get($this->table);
+		
+		return $query->result;
 	}
 }
 ?>

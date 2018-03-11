@@ -22,6 +22,8 @@ class genderC extends RestfulController{
 				case "gender":
 					
 					$data['title']="Gender List";
+					$data['headers'] = $this->genderlist->getHeaders();
+					$data['vals'] = $this->genderlist->getAll();
 					$this->load->view("templates/header", $data);					
 					$this->load->view($pageFile, $data);
 					$this->load->view("templates/footer", $data);

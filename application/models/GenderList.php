@@ -23,8 +23,13 @@ class GenderList extends Restful_Model{
 		//return $parent::get($id);
 	}
 	
-	public function getLists(){		
-		$query = $this->db->query('Select * From ml_genderlist');
+	public function getAll(){	
+		echo $this->table;
+		$query = $this->db->get($this->table);
 		return $query->result();
+	}
+	
+	public function getHeaders(){
+		return array("ID", "Name", "Code", "Description");
 	}
 }
