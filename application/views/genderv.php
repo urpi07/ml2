@@ -5,10 +5,11 @@
 	<label id="ml_lbl_gname">Code</label>
 	<input type="text" name="ml_gcode" id="ml_gcode" required placeholder="Gender Code"></input><br>
 	<label id="ml_lbl_gname">Description</label>
-	<input type="text" name="ml_gdescription" id="ml_gname" required placeholder="Description"></input><br>
+	<input type="text" name="ml_gdescription" id="ml_gdescription" required placeholder="Description"></input><br>
 	<button type="submit" name="ml_submit">Submit</button>
 	
-	<table>
+	<?php echo "Base URL: ".base_url(); ?>
+	<table class="table-bordered" id="genderTable">
 	<tr>
 		<th>
 			<?php

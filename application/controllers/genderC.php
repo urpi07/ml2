@@ -27,12 +27,9 @@ class genderC extends RestfulController{
 					$this->load->view("templates/header", $data);					
 					$this->load->view($pageFile, $data);
 					$this->load->view("templates/footer", $data);
-					
-					echo "Request Method: ".$_SERVER["REQUEST_METHOD"];
-					$result = parent::processRequest();
-					echo json_encode($result);
-				break;
-					
+										
+					$result = parent::processRequest();					
+				break;					
 			}
 		}		
 	}
