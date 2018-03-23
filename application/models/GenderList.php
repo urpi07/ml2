@@ -30,6 +30,6 @@ class GenderList extends Restful_Model{
 	}
 	
 	public function getHeaders(){
-		return array("ID", "Name", "Code", "Description");
+		return array("ID", "Name", "Code", "Description", "Actions");
 	}
 }
