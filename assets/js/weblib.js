@@ -44,15 +44,13 @@ function getFormData(form){
 	
 	if(form){
 		
-		form.find(':input').each(function(){
-			
+		form.find(':input').each(function(){			
 			if(this.attr('type') == 'radio'){			
 				formData[$(this).attr('name')] = $(this).find(':checked').val();
 			}
 			else{
 				formData[$(this).attr('name')] = $(this).val();	
-			}
-			
+			}			
 		});
 		
 		form.find('textarea').each(function(){
@@ -61,10 +59,9 @@ function getFormData(form){
 		
 		form.find('select').each(function(){
 			formData[$(this).attr('name')] = $(this).find(':selected').text();
-		});
-		
-		
+		});			
 	}
 	
 	return formData;
 }
+

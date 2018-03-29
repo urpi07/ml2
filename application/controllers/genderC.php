@@ -76,8 +76,7 @@ class genderC extends RestfulController{
 	}
 	
 	public function doPut(){
-		parent::doPut();
-		
+		parent::doPut();		
 	}
 	
 	public function doDelete(){
