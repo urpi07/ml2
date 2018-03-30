@@ -1,6 +1,22 @@
 /**
  * Prerequiste is jquery
  */
+ 
+ var ajaxURL = 's/';
+ var formData;
+ 
+ var ML_MODES = {
+	EDIT: 'put',
+	NEW : 'post',
+	DELETE : 'delete',
+	GET : 'get'
+ }
+ 
+ var ml_form = {
+	formMode: ML_MODES.NEW,
+	recToDelete: 0,
+	recToEdit: 0
+ }
 
 // jQuery plugin to prevent double submission of forms
 jQuery.fn.preventDoubleSubmission = function() {
@@ -63,5 +79,12 @@ function getFormData(form){
 	}
 	
 	return formData;
+}
+
+function deleteEntry(type, id){
+	
+	if(type && id){
+		
+	}
 }
 

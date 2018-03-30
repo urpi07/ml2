@@ -13,7 +13,7 @@ class genderC extends RestfulController{
 	public function view($page){
 		
 		$pageFile = $page."v";
-		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") ){
+		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") && $page != 's' ){
 			echo "$page not found";
 			echo APPPATH.'views\\'.$page.".php";
 		}
@@ -29,7 +29,19 @@ class genderC extends RestfulController{
 					$this->load->view("templates/footer", $data);
 										
 					$result = parent::processRequest();					
-				break;					
+				break;
+
+				case 's': //service provider for all our ajax request				
+					$result = parent::processRequest();
+					return json_encode($result);
+				break;
+
+				case 'getList':
+					//TODO: implement pagination
+					
+					$data['vals'] = $this->genderlist->getAll();
+					$this->load->view('gender.v', $data);
+				break;
 			}
 		}		
 	}
