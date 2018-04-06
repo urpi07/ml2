@@ -54,5 +54,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //$route['translate_uri_dashes'] = FALSE;
 $route['gender'] = 'genderc/view/gender';
 $route['s/gender'] = 'genderc/view/s';
+$route['s/getList'] = 'genderc/view/getList';
 $route['default_controller'] = 'pages/view';
 $route['(:any)'] = 'pages/view/$1';

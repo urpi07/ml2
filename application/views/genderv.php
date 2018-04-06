@@ -111,7 +111,7 @@
 
 <script>
 var recordToDelete;
-var newRecBtn, saveBtn;
+var newRecBtn, saveBtn, deleteOk;
 var formModal;
 var recordForm, dataList;
 
@@ -121,11 +121,13 @@ $( document ).ready(function() {
 
 function pageInit(){
 	newRecBtn = $('#newRec');	
-	if(!formModal) formModal = $('#genderFormModal');
-	if(!recordForm) recordForm = $('#genderForm');
-	if(!saveBtn) saveBtn = $('#ml_btnSave');
-	if(!dataList) dataList = $('#dataList');
+	formModal = $('#genderFormModal');
+	recordForm = $('#genderForm');
+	saveBtn = $('#ml_btnSave');
+	dataList = $('#dataList');
+	deleteOk = $('#deleteOk');
 	
+	deleteOk.click(deleteRecord);
 	saveBtn.click(submitForm);
 	newRecBtn.click(showNew);
 }
@@ -151,6 +153,12 @@ function confirmDelete(id){
 
 function deleteRecord(){
 	
+	var payload = {
+		id : recordToDelete,
+		method : "delete"
+	};
+	
+	sendAjax(payload, successCB, failCB);
 }
 
 function successCB(result){
@@ -200,17 +208,19 @@ function updateDisplay(){
 	getList();
 }
 
-function updateSuccessCB(result){
-	//dataList.
+function updateSuccessCB(result){	
+	console.log("updateSuccessCB: " + JSON.stringify(result));	
+	dataList.html(result.toString());
 }
 
 function updateFailedCB(result){
+	console.log("updateFailedCB: " + JSON.stringify(result));
 }
 
 function getList(page){
 	var payLoad = {
 		method: ML_MODES.GET,
-		url: 'getList'		
+		url: ajaxURL + 'getList'		
 	}
 	
 	sendAjax(payLoad, updateSuccessCB, updateFailedCB);

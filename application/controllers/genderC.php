@@ -13,7 +13,7 @@ class genderC extends RestfulController{
 	public function view($page){
 		
 		$pageFile = $page."v";
-		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") && $page != 's' ){
+		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") && $page == 'gender.v' ){
 			echo "$page not found";
 			echo APPPATH.'views\\'.$page.".php";
 		}
