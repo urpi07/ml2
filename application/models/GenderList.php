@@ -8,7 +8,7 @@ class GenderList extends Restful_Model{
 	}
 	
 	public function add(){					
-		return  parent::add();			
+		return parent::add();			
 	}
 	
 	public function edit(){		

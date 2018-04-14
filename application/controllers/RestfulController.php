@@ -33,16 +33,14 @@ class RestfulController extends CI_Controller{
 		//HACK: since there is no $_DELETE
 		//we create on and copy it to the $_POST variable to take advantage of codeigniter
 		//form validation
-		parse_str(file_get_contents('php://input', false , null, -1 , $_SERVER['CONTENT_LENGTH'] ), $_DELETE);
-		$_POST = $_DELETE;
+		parse_str(file_get_contents('php://input'), $_POST);	
 	}
 	
 	public function doPut(){
 		//HACK: since there is no $_PUT
 		//we create on and copy it to the $_POST variable to take advantage of codeigniter
 		//form validation
-		parse_str(file_get_contents('php://input', false , null, -1 , $_SERVER['CONTENT_LENGTH'] ), $_PUT);
-		$_POST = $_PUT;
+		parse_str(file_get_contents('php://input'), $_POST);
 	}
 	
 	public function doGet(){}

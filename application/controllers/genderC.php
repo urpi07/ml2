@@ -3,17 +3,20 @@ require("RestfulController.php");
 
 class genderC extends RestfulController{
 
+	private $table = 'ml_genderlist';
+	
 	public function __construct(){
 		parent::__construct();
 		$this->load->helper('url');
 		$this->load->library('form_validation');
 		$this->load->model('genderlist');
+		$this->load->model('genericQuery');
 	}
 	
 	public function view($page){
 		
 		$pageFile = $page."v";
-		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") && $page == 'gender.v' ){
+		if ( ! file_exists(APPPATH.'views\\'.$pageFile.".php") && $page == 'gender' ){
 			echo "$page not found";
 			echo APPPATH.'views\\'.$page.".php";
 		}
@@ -31,7 +34,8 @@ class genderC extends RestfulController{
 					$result = parent::processRequest();					
 				break;
 
-				case 's': //service provider for all our ajax request				
+				case 's': //service provider for all our ajax request
+					//var_dump($_POST);
 					$result = parent::processRequest();
 					return json_encode($result);
 				break;
@@ -56,11 +60,8 @@ class genderC extends RestfulController{
 		return $data;
 	}
 	
-	public function doPost(){
-		parent::doPost();
-		
-		$result = array();
-		$validationRules = array(
+	private function getValidation(){
+		return array(
 			array('field' => 'name',
 					'rules' => 'trim|required'),
 			array('field' => 'code',
@@ -68,17 +69,27 @@ class genderC extends RestfulController{
 			array('field' => 'description',
 				'rules' => 'trim'),		
 		);
+	}
+	
+	private function getValidationError(){
+		return 	array("result" => VALIDATION_ERROR,
+					"message" => $this->form_validation->error_array(),
+					"title" => "Validation Error...");
+	}	
+	
+	public function doPost(){
+		parent::doPost();
+		
+		$result;
+		$validationRules = getValidation();
 		
 		$data = $this->mapData($_POST);
 		$this->genderlist->setData($data);
 		$this->form_validation->set_data($data);
 		$this->form_validation->set_rules($validationRules);
 
-		if($this->form_validation->run() === FALSE){ //validation failed
-			
-			$result["result"] = VALIDATION_ERROR;
-			$result["message"] = $this->form_validation->error_array() ;
-			$result["title"] = "Validation Error...";
+		if($this->form_validation->run() === FALSE){ //validation failed			
+			$result = getValidationError();
 		}
 		else{ //validation success
 			$result= $this->genderlist->add();
@@ -88,11 +99,30 @@ class genderC extends RestfulController{
 	}
 	
 	public function doPut(){
-		parent::doPut();		
+		parent::doPut();
+
+		$result;
+		$validationRules = getValidation();
+		
+		$data = $this->mapData($_POST);
+		$this->genderlist->setData($data);
+		$this->form_validation->set_data($data);
+		$this->form_validation->set_rules($validationRules);
+
+		if($this->form_validation->run() === FALSE){ //validation failed			
+			$result = getValidationError();
+		}
+		else{ //validation success		
+			$result= $this->genderlist->edit();
+		}
+
+		return $result;		
 	}
 	
 	public function doDelete(){
 		parent::doDelete();
+		var_dump($_POST);
+		return $this->genericQuery->deleteRecord($this->table, $_POST['id']);		
 	}
 	
 	public function doGet(){

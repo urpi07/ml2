@@ -63,6 +63,29 @@
 		</div>
 	  </div>
 	</div>	
+	
+	<!-- Info Modals -->
+	<div class="modal fade" id="infoDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Gender</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+				<div class='infoMessage'>
+				</div>				
+		  </div>
+
+		  <div class="modal-footer">			
+			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
 	<!-- End of Modals -->
 
 	<div class='row'>
@@ -98,7 +121,7 @@
 						echo "<td>$value->description</td>";
 						echo "<td>";
 							echo "<span class='fas fa-pencil-alt fa-sm ml_link' onclick='showEdit($value->id)'>&nbsp;&nbsp;</span>&nbsp;&nbsp;";
-							echo "<span class='fas fa-trash-alt fa-sm ml_link' onclick='confirmDelete()'>&nbsp;&nbsp;</span>";
+							echo "<span class='fas fa-trash-alt fa-sm ml_link' onclick='confirmDelete($value->id)'>&nbsp;&nbsp;</span>";
 						echo "</td>";
 					echo "</tr>";
 				}
@@ -106,13 +129,17 @@
 			?>
 			</tbody>
 		</table>
+		
+		<div class="row" id="serverMsg">
+			No Errors.
+		</div>
 	</div>
 </div>
 
 <script>
 var recordToDelete;
 var newRecBtn, saveBtn, deleteOk;
-var formModal;
+var formModal, infoDialog, infoMessage;
 var recordForm, dataList;
 
 $( document ).ready(function() {
@@ -120,12 +147,16 @@ $( document ).ready(function() {
 });
 
 function pageInit(){
+	//cache all the DOM objects
 	newRecBtn = $('#newRec');	
 	formModal = $('#genderFormModal');
 	recordForm = $('#genderForm');
 	saveBtn = $('#ml_btnSave');
 	dataList = $('#dataList');
 	deleteOk = $('#deleteOk');
+	infoDialog = $('infoDialog');
+	infoMessage = $('infoMessage');
+	serverMsg = $('serverMsg');
 	
 	deleteOk.click(deleteRecord);
 	saveBtn.click(submitForm);
@@ -154,27 +185,44 @@ function confirmDelete(id){
 function deleteRecord(){
 	
 	var payload = {
-		id : recordToDelete,
-		method : "delete"
+		url:  ajaxURL + 'gender',
+		data : {"id":recordToDelete},
+		method : ML_MODES.DELETE
 	};
 	
+	console.log('recordToDelete :' + recordToDelete);
+	console.log(JSON.stringify(payload));
 	sendAjax(payload, successCB, failCB);
 }
 
 function successCB(result){
 	console.log("succesCB: " + JSON.stringify(result));
 	formModal.modal('hide');
-	completeSubmit(recordForm);
-	updateDisplay();	
+	completeSubmit(recordForm);	
+	
+	try{		
+		var msg = JSON.parse(result);
+	}
+	catch(er){
+		serverMsg.html(result.toString());
+	}
+	
+	/*if(msg && msg.message){
+		showInfoDialog(msg.message);
+	}	
+	
+	updateDisplay();	*/
 }
 
 function failCB(result){
-	console.log("failCB: " + JSON.stringify(result));	
+	//console.log("failCB: " + JSON.stringify(result));
+
+	serverMsg.html(result.toString());
 }
 
 function submitForm(){
 	
-	formData = getFormData();
+	formData = getFormData();	
 	var formMode = recordForm.attr('method');
 	
 	if(validateForm(formData)){		
@@ -224,5 +272,10 @@ function getList(page){
 	}
 	
 	sendAjax(payLoad, updateSuccessCB, updateFailedCB);
+}
+
+function showInfoDialog(message){
+	infoMessage.html(message);
+	infoDialog.show(show);
 }
 </script>
