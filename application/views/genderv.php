@@ -94,7 +94,8 @@
 		</button>
 	</div>
 	<br>
-	<div class='row' id='dataList'>
+	
+	<div class='row' id='dataList'>	
 		<table class="table table-striped table-bordered table-hover table-sm" id="genderTable">
 			<thead class='thead-dark'>
 				<tr>
@@ -133,14 +134,16 @@
 		<div class="row" id="serverMsg">
 			No Errors.
 		</div>
-	</div>
+	</div>	
+
 </div>
 
 <script>
 var recordToDelete;
 var newRecBtn, saveBtn, deleteOk;
-var formModal, infoDialog, infoMessage;
+var formModal, infoDialog, infoMessage, confirmDelete;
 var recordForm, dataList;
+var fldName, fldCode, fldDescription;
 
 $( document ).ready(function() {
     pageInit();
@@ -157,6 +160,7 @@ function pageInit(){
 	infoDialog = $('infoDialog');
 	infoMessage = $('infoMessage');
 	serverMsg = $('serverMsg');
+	confirmDelete = $('confirmDelete');
 	
 	deleteOk.click(deleteRecord);
 	saveBtn.click(submitForm);
@@ -164,22 +168,38 @@ function pageInit(){
 }
 
 function showEdit(id){
-	
 	console.log("id: "+ id);
+	recordForm.trigger('reset');
 	recordForm.prop('method', ML_MODES.EDIT);
 	
+	getRecord(id);
 	//populate the form.	
-	$('#genderFormModal').modal('show');
+	formModal.modal('show');
+}
+
+function getRecord(id){
+	
+	var payload = {
+		url:  ajaxURL + 'gender',
+		data : {"id":id},
+		method : ML_MODES.PUT
+	};
+	
+	sendAjax(payload, getRecordSuccessCB, failCB);
+}
+
+function getRecordSuccessCB(result){
+	console.log(result);
 }
 
 function showNew(){
 	recordForm.prop('method', ML_MODES.NEW);
-	$('#genderFormModal').modal('show');
+	formModal.modal('show');
 }
 
 function confirmDelete(id){
 	recordToDelete = id;
-	$('#confirmDelete').modal('show');
+	confirmDelete.modal('show');
 }
 
 function deleteRecord(){
@@ -198,6 +218,7 @@ function deleteRecord(){
 function successCB(result){
 	console.log("succesCB: " + JSON.stringify(result));
 	formModal.modal('hide');
+	confirmDelete.modal('hide');
 	completeSubmit(recordForm);	
 	
 	try{		
@@ -207,11 +228,11 @@ function successCB(result){
 		serverMsg.html(result.toString());
 	}
 	
-	/*if(msg && msg.message){
+	if(msg && msg.message){
 		showInfoDialog(msg.message);
 	}	
 	
-	updateDisplay();	*/
+	updateDisplay();	
 }
 
 function failCB(result){

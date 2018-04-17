@@ -43,6 +43,11 @@ class RestfulController extends CI_Controller{
 		parse_str(file_get_contents('php://input'), $_POST);
 	}
 	
-	public function doGet(){}
+	public function doGet(){
+		//HACK: since there is no $_PUT
+		//we create on and copy it to the $_POST variable to take advantage of codeigniter
+		//form validation		
+		parse_str(file_get_contents('php://input'), $_POST);
+	}
 	
 }
